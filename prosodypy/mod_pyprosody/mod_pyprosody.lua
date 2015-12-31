@@ -32,8 +32,4 @@ if load_code_factory == nil then
     else
         module:log("error", "VE script exited with non-zero status %s", virtualenv_exit_code);
     end
-else
-    -- already under lupa, monkey patch the plugin loader to accept python
-    -- files
-    pluginloader.load_code = load_code_factory(pluginloader.load_code);
 end
