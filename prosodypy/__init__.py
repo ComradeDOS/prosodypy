@@ -13,14 +13,6 @@ def execute_lua_file(filename):
         code = code[code.find('\n'):]
     lua.execute(code)
 
-class LuaModuleWrapper(object):
-    def __init__(self, module):
-        self.module = module
-
-    def __call__(self, *args):
-        return self.module(*args)
-
-
 def load_code_factory(orig_load_code):
     def load_code(plugin, resource, env):
         if plugin.startswith('!py:'):
