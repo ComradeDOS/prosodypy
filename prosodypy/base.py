@@ -1,5 +1,26 @@
 from prosodypy.decorators import lua_object_method
 
+class ModuleWrapper(object):
+    def __init__(self, module):
+        self.module = module
+
+    def __getattr__(self, key):
+        if key == 'module':
+            return super(ModuleWrapper, self).__getattr__(key)
+        value = getattr(self.module, key)
+        if callable(value):
+            return lambda *args: value(self.module, *args)
+        return value
+
+    def __setattr__(self, key, value):
+        if key == 'module':
+            return super(ModuleWrapper, self).__setattr__(key, value)
+        return setattr(self.module, key, value)
+
+    def __hasattr__(self, key):
+        return hasattr(self.module, key)
+
+
 class ProsodyBasePlugin(object):
     """
     Base Prosody plugin class to be derived by all different plugins.
@@ -11,7 +32,10 @@ class ProsodyBasePlugin(object):
 
     def __init__(self, env, lua):
         self.env = env
-        self.module = env.module
+        self._module = env.module
+        self.module = ModuleWrapper(self._module)
+        self.prosody = env.prosody
+        self.lua = lua
         for module_method in (
             'load',
             'save',
@@ -27,3 +51,4 @@ class ProsodyBasePlugin(object):
 
     def __call__(self, *args):
         pass
+

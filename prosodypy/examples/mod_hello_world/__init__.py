@@ -6,4 +6,4 @@ class ProsodyPlugin(ProsodyBasePlugin):
     """
 
     def load(self):
-        self.module.log(self.module, u"debug", "Hello prosody from python!")
+        self.module.log(u"debug", "Hello prosody from python!")
