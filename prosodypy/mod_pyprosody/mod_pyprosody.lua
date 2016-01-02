@@ -16,6 +16,9 @@ end
 module:set_global();
 module:log("debug", "Initializing mod_pyprosody...");
 
+prosody.unlock_globals();
+local load_code_factory = _G.load_code_factory;
+prosody.lock_globals();
 if load_code_factory == nil then
     -- we are not running under lupa, let's fix that!
     module:log("debug", "Could not find lupa");
