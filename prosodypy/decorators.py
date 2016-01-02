@@ -7,6 +7,6 @@ def lua_object_method(func, lua):
     """
     return lua.eval('''
         function(func)
-            return function(...) func(...) end
+            return function(...) return func(...) end
         end
     ''')(func)
