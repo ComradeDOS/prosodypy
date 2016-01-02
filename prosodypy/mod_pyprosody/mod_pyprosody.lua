@@ -3,7 +3,6 @@
 -- for prosody on python
 --
 
-
 local pluginloader = require"util.pluginloader";
 local os = require"os";
 
@@ -14,6 +13,7 @@ local start_under_lupa = function()
     os.execute(command); -- XXX: should use luaposix and exec?
 end
 
+module:set_global();
 module:log("debug", "Initializing mod_pyprosody...");
 
 if load_code_factory == nil then
