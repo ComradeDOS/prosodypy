@@ -16,7 +16,10 @@ def execute_lua_file(filename):
 def load_code_factory(orig_load_code):
     def load_code(plugin, resource, env):
         if plugin.startswith('!py:'):
-            plugin = importlib.import_module(plugin[4:]).ProsodyPlugin(env, lua)
+            try:
+                plugin = importlib.import_module(plugin[4:]).ProsodyPlugin(env, lua)
+            except Exception as e:
+                return False, unicode(e)
             return plugin, ""
         else:
             return orig_load_code(plugin, resource, env)
