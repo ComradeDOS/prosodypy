@@ -31,7 +31,7 @@ def install_pymodule_paths():
     config = lua.require("core.configmanager")
     paths = config.get("*", "plugin_paths")
     for i in paths:
-        sys.path.append(paths[i])
+        sys.path.insert(0, paths[i])
 
 lua_globs = lua.globals()
 lua_globs.arg = lua.table_from(sys.argv[1:])
