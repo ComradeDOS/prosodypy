@@ -6,6 +6,7 @@ import lupa
 from lupa import LuaRuntime
 
 lua = LuaRuntime(unpack_returned_tuples=True)
+sys.modules['prosodypy'].lua = lua
 
 def execute_lua_file(filename):
     with open(filename, 'rb') as lua_file:
