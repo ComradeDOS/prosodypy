@@ -14,6 +14,7 @@ def execute_lua_file(filename):
     lua.execute(code)
 
 def load_code_factory(orig_load_code):
+    install_pymodule_paths()
     def load_code(plugin, resource, env):
         if plugin.startswith('!py:'):
             try:
@@ -24,6 +25,12 @@ def load_code_factory(orig_load_code):
         else:
             return orig_load_code(plugin, resource, env)
     return load_code
+
+def install_pymodule_paths():
+    config = lua.require("core.configmanager")
+    paths = config.get("*", "plugin_paths")
+    for i in paths:
+        sys.path.append(paths[i])
 
 lua_globs = lua.globals()
 lua_globs.arg = lua.table_from(sys.argv[1:])
