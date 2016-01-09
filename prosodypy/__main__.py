@@ -29,10 +29,14 @@ lua_globs.load_code_factory = load_code_factory
 orig_lua_select = lua_globs.select
 lua.eval('''
 function(load_code_factory, orig_lua_select)
+    local swapped = false;
     _G.select = function(...)
-        local pluginloader = require "util.pluginloader";
-        pluginloader.load_code = load_code_factory(pluginloader.load_code);
-        _G.select = orig_lua_select;
+        if not swapped then
+            swapped = true;
+            local pluginloader = require "util.pluginloader";
+            pluginloader.load_code = load_code_factory(pluginloader.load_code);
+            _G.select = orig_lua_select;
+        end
         return _G.select(...);
     end
 end
