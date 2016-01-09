@@ -6,11 +6,16 @@
 local pluginloader = require"util.pluginloader";
 local os = require"os";
 
-local start_under_lupa = function()
-    -- starts prosody under lupa
-    local command = "python -m prosodypy " .. table.concat(arg, " ");
-    module:log("debug", "starting prosody.py with %s...", command);
-    os.execute(command); -- XXX: should use luaposix and exec?
+local start_under_lupa_fabric = function(virtualenv_command)
+    return function()
+        -- starts prosody under lupa
+        local command = "python -m prosodypy " .. table.concat(arg, " ");
+        if #virtualenv_command > 0 then
+            command = virtualenv_command .. ' && ' .. command;
+        end
+        module:log("debug", "starting prosody.py with %s...", command);
+        os.execute(command); -- XXX: should use luaposix and exec?
+    end
 end
 
 module:set_global();
@@ -31,7 +36,7 @@ if load_code_factory == nil then
         virtualenv_exit_code = os.execute(virtualenv_command);
     end
     if virtualenv_exit_code == 0 then
-        module:hook_global("server-stopped", start_under_lupa, -1000);
+        module:hook_global("server-stopped", start_under_lupa_fabric(virtualenv_command), -1000);
     else
         module:log("error", "VE script exited with non-zero status %s", virtualenv_exit_code);
     end
