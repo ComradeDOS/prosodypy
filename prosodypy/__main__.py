@@ -1,5 +1,6 @@
 import sys
 import importlib
+import traceback
 
 import lupa
 from lupa import LuaRuntime
@@ -20,7 +21,7 @@ def load_code_factory(orig_load_code):
             try:
                 plugin = importlib.import_module(plugin[4:]).ProsodyPlugin(env, lua)
             except Exception as e:
-                return False, unicode(e)
+                return False, traceback.format_exc()
             return plugin, ""
         else:
             return orig_load_code(plugin, resource, env)
