@@ -7,13 +7,7 @@ from lupa import LuaRuntime
 
 lua = LuaRuntime(unpack_returned_tuples=True)
 sys.modules['prosodypy'].lua = lua
-
-def execute_lua_file(filename):
-    with open(filename, 'rb') as lua_file:
-        code = lua_file.read()
-    if code.startswith('#!'):
-        code = code[code.find('\n'):]
-    lua.execute(code)
+execute_lua_file = sys.modules['prosodypy'].execute_lua_file
 
 def load_code_factory(orig_load_code):
     install_pymodule_paths()
@@ -54,4 +48,4 @@ function(load_code_factory, orig_lua_select)
 end
 ''')(load_code_factory, orig_lua_select)
 
-execute_lua_file('/usr/bin/prosody') # TODO: don't hardcode
+execute_lua_file(lua, '/usr/bin/prosody') # TODO: don't hardcode
