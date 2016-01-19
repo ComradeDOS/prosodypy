@@ -1,3 +1,7 @@
+import traceback
+from functools import wraps
+from types import MethodType, GeneratorType
+
 from prosodypy.decorators import lua_object_method
 
 class ModuleWrapper(object):
@@ -20,6 +24,30 @@ class ModuleWrapper(object):
     def __hasattr__(self, key):
         return hasattr(self.module, key)
 
+def loggable_iterator_wrapper(self, iterator):
+    try:
+        for value in iterator:
+            yield value
+    except Exception:
+        self.module.log(
+            "error", "Python exception: %s", traceback.format_exc()
+        )
+        raise
+
+def loggable(self, func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        try:
+            result = func(*args, **kwargs)
+        except Exception as exc:
+            self.module.log(
+                "error", "Python exception: %s", traceback.format_exc()
+            )
+            raise
+        if isinstance(result, GeneratorType):
+            return loggable_iterator_wrapper(self, result)
+        return result
+    return inner
 
 class ProsodyBasePlugin(object):
     """
@@ -48,6 +76,11 @@ class ProsodyBasePlugin(object):
                     self.module, module_method,
                     lua_object_method(getattr(self, module_method), lua)
                 )
+
+        for key in dir(self):
+            method = getattr(self, key)
+            if not key.startswith('__') and isinstance(method, MethodType):
+                setattr(self, key, loggable(self, method))
 
     def __call__(self, *args):
         pass
