@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='prosodypy',
@@ -6,12 +6,14 @@ setup(
                 'XMPP Server',
     author='Sergey Dobrov',
     author_email='binary@jrudevels.org',
-    version='0.1',
+    version='0.2',
     url='https://github.com/jbinary/prosodypy',
     packages=[
         'prosodypy',
         'prosodypy.examples',
-        'prosodypy.mod_prosodypy',
         'prosodypy.twilix_compat',
     ],
+    package_data={
+        'prosodypy': ['mod_prosodypy/mod_prosodypy.lua'],
+    },
 )
