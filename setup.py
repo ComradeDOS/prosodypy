@@ -6,7 +6,7 @@ setup(
                 'XMPP Server',
     author='Sergey Dobrov',
     author_email='binary@jrudevels.org',
-    version='0.2',
+    version='0.2.1',
     url='https://github.com/jbinary/prosodypy',
     packages=[
         'prosodypy',
