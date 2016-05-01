@@ -27,7 +27,7 @@ def parse_string(stanza):
 
 def parse_prosody_stanza(stanza):
     assert lua is not None
-    return parse_string(lua.eval('tostring')[1](stanza))
+    return parse_string(lua.eval('tostring(...)', stanza))
 
 if lua:
     Stanza = lua.require("util.stanza").stanza
