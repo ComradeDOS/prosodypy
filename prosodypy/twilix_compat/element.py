@@ -4,6 +4,7 @@ from prosodypy import lua
 
 from twisted.words.xish.xmlstream import XmlStream
 
+
 class FakeStream(XmlStream):
     def __init__(self, stream_xmlns='jabber:client', *args, **kwargs):
         XmlStream.__init__(self, *args, **kwargs)
@@ -16,14 +17,16 @@ class FakeStream(XmlStream):
             return
         self.resulted_element = element
 
-xmlstream = FakeStream()
 
 def parse_string(stanza):
+    xmlstream = FakeStream()
     xmlstream.dataReceived(stanza.encode('utf-8'))
     result = xmlstream.resulted_element
     assert result is not None
     xmlstream.resulted_element = None
+    xmlstream.connectionLost('')
     return result
+
 
 def parse_prosody_stanza(stanza):
     assert lua is not None
@@ -31,6 +34,8 @@ def parse_prosody_stanza(stanza):
 
 if lua:
     Stanza = lua.require("util.stanza").stanza
+
+
 def build_prosody_stanza(element, current_ns=None, current_tag=None):
     name = element.name
     attrs = copy(element.attributes)
