@@ -45,26 +45,23 @@ lua_globs.load_code_factory = load_code_factory
 orig_lua_select = lua_globs.select
 lua.eval('''
 function(load_code_factory, orig_lua_select)
-    _G.select = function(...)
-        local events = require 'util.events';
-        local old_new = events.new;
-        events.new = function(...)
-            local result = old_new(...);
-            local old_fire_event = result.fire_event;
-            result.fire_event = function(event, ...)
-                if event == 'server-starting' then
-                    local pluginloader = require "util.pluginloader";
-                    pluginloader.load_code = load_code_factory(
-                        pluginloader.load_code);
-                end
-                return old_fire_event(event, ...);
+    package.path = '/usr/lib/prosody/?.lua;' .. package.path;
+    local events = require 'util.events';
+    local old_new = events.new;
+    events.new = function(...)
+        local result = old_new(...);
+        local old_fire_event = result.fire_event;
+        result.fire_event = function(event, ...)
+            if event == 'server-starting' then
+                local pluginloader = require "util.pluginloader";
+                pluginloader.load_code = load_code_factory(
+                    pluginloader.load_code);
             end
-            return result;
+            return old_fire_event(event, ...);
         end
-        _G.select = orig_lua_select;
-        return orig_lua_select(...);
+        return result;
     end
 end
 ''')(load_code_factory, orig_lua_select)
 
-execute_lua_file(lua, '/usr/bin/prosody') # TODO: don't hardcode
+execute_lua_file(lua, '/usr/bin/prosody')  # TODO: don't hardcode
