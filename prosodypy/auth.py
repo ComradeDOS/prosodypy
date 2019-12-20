@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from prosodypy.base import ProsodyBasePlugin
 
 class ProsodyAuthPlugin(ProsodyBasePlugin):

@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from copy import copy
 
 from prosodypy import lua
@@ -49,7 +50,7 @@ def build_prosody_stanza(element, current_ns=None, current_tag=None):
         current_tag.tag(current_tag, name, lua.table_from(attrs))
         added_tag = True
     for child in element.children:
-        if isinstance(child, unicode):
+        if isinstance(child, str):
             current_tag.text(current_tag, child)
         else:
             build_prosody_stanza(child, current_ns, current_tag)

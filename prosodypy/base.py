@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 import traceback
 from functools import wraps
 from types import MethodType, GeneratorType

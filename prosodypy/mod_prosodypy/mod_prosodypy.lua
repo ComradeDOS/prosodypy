@@ -35,7 +35,7 @@ if load_code_factory == nil then
         module:log("debug", "Activating python virtual environment using command %s", virtualenv_command);
         virtualenv_exit_code = os.execute(virtualenv_command);
     end
-    if virtualenv_exit_code == 0 then
+    if virtualenv_exit_code == 0 or virtualenv_exit_code == true then
         module:hook_global("server-stopped", start_under_lupa_fabric(virtualenv_command), -1000);
     else
         module:log("error", "VE script exited with non-zero status %s", virtualenv_exit_code);
