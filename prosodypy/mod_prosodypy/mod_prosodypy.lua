@@ -27,17 +27,19 @@ prosody.lock_globals();
 if load_code_factory == nil then
     -- we are not running under lupa, let's fix that!
     module:log("debug", "Could not find lupa");
-    prosody.shutdown('restarting over lupa...');
+    module:hook_global("server-started", function()
+        prosody.shutdown('restarting over lupa...');
 
-    local virtualenv_command = module:get_option_string("python_ve_activate_command", "");
-    local virtualenv_exit_code = 0;
-    if #virtualenv_command > 0 then
-        module:log("debug", "Activating python virtual environment using command %s", virtualenv_command);
-        virtualenv_exit_code = os.execute(virtualenv_command);
-    end
-    if virtualenv_exit_code == 0 or virtualenv_exit_code == true then
-        module:hook_global("server-stopped", start_under_lupa_fabric(virtualenv_command), -1000);
-    else
-        module:log("error", "VE script exited with non-zero status %s", virtualenv_exit_code);
-    end
+        local virtualenv_command = module:get_option_string("python_ve_activate_command", "");
+        local virtualenv_exit_code = 0;
+        if #virtualenv_command > 0 then
+            module:log("debug", "Activating python virtual environment using command %s", virtualenv_command);
+            virtualenv_exit_code = os.execute(virtualenv_command);
+        end
+        if virtualenv_exit_code == 0 or virtualenv_exit_code == true then
+            module:hook_global("server-stopped", start_under_lupa_fabric(virtualenv_command), -1000);
+        else
+            module:log("error", "VE script exited with non-zero status %s", virtualenv_exit_code);
+        end
+    end, -1000);
 end
