@@ -45,7 +45,7 @@ lua_globs.load_code_factory = load_code_factory
 orig_lua_select = lua_globs.select
 lua.eval('''
 function(load_code_factory, orig_lua_select)
-    package.path = '/usr/lib/prosody/?.lua;' .. package.path;
+    package.path = '/usr/lib/prosody/?.lua;/usr/lib64/prosody/?.lua;' .. package.path;
     local events = require 'util.events';
     local old_new = events.new;
     events.new = function(...)
